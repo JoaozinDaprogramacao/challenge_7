@@ -18,6 +18,8 @@ import com.br.alura.challange7.domain.depoimentos.DepoimentoGetDto;
 import com.br.alura.challange7.domain.depoimentos.DepoimentoPutDto;
 import com.br.alura.challange7.domain.depoimentos.DepoimentoService;
 
+import jakarta.validation.Valid;
+
 @Controller
 @RequestMapping("/depoimentos")
 public class DepoimentoController {
@@ -41,17 +43,17 @@ public class DepoimentoController {
 	public ResponseEntity<?> getById(@PathVariable(value = "id") String id) {
 		return service.getElementById(Long.parseLong(id));
 	}
-	
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> deleteById(@PathVariable(value = "id") String id) {
 		return service.deleteElementById(Long.parseLong(id));
 	}
-	
+
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateById(@PathVariable(value = "id") String id, 
-			DepoimentoPutDto dto) {
+	public ResponseEntity<?> updateById(@PathVariable(value = "id") String id,
+			@Valid DepoimentoPutDto dto){
+
 		return service.updateElementById(Long.parseLong(id), dto);
 	}
-	
 
 }
