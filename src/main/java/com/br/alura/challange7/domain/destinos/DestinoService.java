@@ -13,6 +13,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.br.alura.challange7.infra.exceptions.InternalEntityNotFoundException;
 import com.br.alura.challange7.infra.exceptions.UniqueException;
+import com.theokanning.openai.completion.CompletionRequest;
+import com.theokanning.openai.service.OpenAiService;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -23,15 +25,18 @@ public class DestinoService {
 	@Autowired
 	private DestinoRepository repository;
 
-	public ResponseEntity<DestinoGetDto> save(byte[] foto, byte[] foto2, BigDecimal preco, 
-			String nome, String meta, String textoDescritivo) throws UniqueException, IOException {
-		DestinoPostDto dto = new DestinoPostDto(foto, foto2, preco,
-				nome, meta, textoDescritivo);
+	public ResponseEntity<DestinoGetDto> save(byte[] foto, byte[] foto2, BigDecimal preco, String nome, String meta,
+			String textoDescritivo) throws UniqueException, IOException {
+		DestinoPostDto dto = new DestinoPostDto(foto, foto2, preco, nome, meta, textoDescritivo);
 		validaDto(dto);
 
 		if (repository.existsByNome(nome)) {
 			throw new UniqueException(
 					"Não foi possivel cadastrar pois já existe um destino " + "cadastrado com esse nome!");
+		}
+
+		if (dto.getTextoDescritivo().isEmpty()) {
+			dto.setTextoDescritivo(gerarTextoDescritivo(dto.getNome()));
 		}
 
 		Destino destino = dto.toEntity();
@@ -40,11 +45,29 @@ public class DestinoService {
 		String uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(destino.getId())
 				.toUriString();
 
-		return ResponseEntity.created(URI.create(uri))
-				.body(new DestinoGetDto(destino.getFoto(), destino.getFoto2(),
-						destino.getPreco(), destino.getNome(), destino.getMeta(),
-						destino.getTextoDescritivo()));
+		return ResponseEntity.created(URI.create(uri)).body(new DestinoGetDto(destino.getFoto(), destino.getFoto2(),
+				destino.getPreco(), destino.getNome(), destino.getMeta(), destino.getTextoDescritivo()));
 
+	}
+
+	private String gerarTextoDescritivo(String nome) {
+		
+		final String chaveApi = "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";
+		final String prompt = "Faça um resumo sobre "+ nome + " enfatizando "
+        		+ "o porque este lugar é incrível. Utilize uma "
+        		+ "linguagem informal e até 100 caracteres no "
+        		+ "máximo em cada parágrafo. Crie 2 parágrafos neste resumo.";
+		
+		OpenAiService service = new OpenAiService(chaveApi);
+		
+		CompletionRequest request = CompletionRequest.builder()
+		        .model("text-davinci-003")
+		        .prompt(prompt)
+		        .maxTokens(300)
+		        .build();
+	
+		return service.createCompletion(request).getChoices().get(0).getText();
+		
 	}
 
 	private void validaDto(@Valid DestinoPostDto dto) {
@@ -111,7 +134,8 @@ public class DestinoService {
 
 	}
 
-	private void validaDto(@Valid DestinoPutDto dto) {}
+	private void validaDto(@Valid DestinoPutDto dto) {
+	}
 
 	public ResponseEntity<?> deleteElementById(long id) {
 		if (!repository.existsById(id)) {
