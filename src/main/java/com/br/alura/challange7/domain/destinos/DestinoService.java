@@ -23,8 +23,10 @@ public class DestinoService {
 	@Autowired
 	private DestinoRepository repository;
 
-	public ResponseEntity<DestinoGetDto> save(byte[] foto, BigDecimal preco, String nome) throws UniqueException {
-		DestinoPostDto dto = new DestinoPostDto(foto, preco, nome);
+	public ResponseEntity<DestinoGetDto> save(byte[] foto, byte[] foto2, BigDecimal preco, 
+			String nome, String meta, String textoDescritivo) throws UniqueException, IOException {
+		DestinoPostDto dto = new DestinoPostDto(foto, foto2, preco,
+				nome, meta, textoDescritivo);
 		validaDto(dto);
 
 		if (repository.existsByNome(nome)) {
@@ -39,7 +41,10 @@ public class DestinoService {
 				.toUriString();
 
 		return ResponseEntity.created(URI.create(uri))
-				.body(new DestinoGetDto(destino.getId(), dto.foto(), dto.preco(), dto.nome()));
+				.body(new DestinoGetDto(
+						destino.getId(), destino.getFoto(), destino.getFoto2(),
+						destino.getPreco(), destino.getNome(), destino.getMeta(),
+						destino.getTextoDescritivo()));
 
 	}
 

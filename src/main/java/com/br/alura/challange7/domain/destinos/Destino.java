@@ -28,16 +28,25 @@ public class Destino {
 	@Lob
 	@Column(columnDefinition = "LONGBLOB")
 	private byte[] foto;
+	@Column(columnDefinition = "LONGBLOB")
+	private byte[] foto2;
 	@Column(precision = 10, scale = 2)
 	private BigDecimal preco;
 	private String nome;
+	@Column(length = 160)
+	private String meta;
+	@Column(length = 300, name = "texto_descritivo")
+	private String textoDescritivo;
 	
-	public Destino(byte[] foto, BigDecimal preco, String nome) {
+	
+	public Destino(byte[] foto, byte[] foto2, BigDecimal preco, String nome, String meta, String textoDescritivo) {
+		super();
 		this.foto = foto;
+		this.foto2 = foto2;
 		this.preco = preco;
 		this.nome = nome;
-	}
-	
-	
+		this.meta = meta;
+		this.textoDescritivo = textoDescritivo;
+	}	
 	
 }

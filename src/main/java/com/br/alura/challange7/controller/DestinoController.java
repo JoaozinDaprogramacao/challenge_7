@@ -29,10 +29,15 @@ public class DestinoController {
 
 	@PostMapping
 	public ResponseEntity<DestinoGetDto> post(@RequestParam("foto") MultipartFile file,
+			@RequestParam("foto2") MultipartFile file2,
 	        @RequestParam("preco") String precoParam,
-	        @RequestParam("nome") String nome) throws IOException, UniqueException {
+	        @RequestParam("nome") String nome,
+	        @RequestParam("meta") String meta,
+	        @RequestParam("textoDescritivo") String textoDescritivo
+	        )	throws IOException, UniqueException {
 		
-		return service.save(file.getBytes(), new BigDecimal(precoParam), nome);
+		return service.save(file.getBytes(), file2.getBytes(),
+				new BigDecimal(precoParam), nome, meta, textoDescritivo);
 	}
 	
 	@GetMapping

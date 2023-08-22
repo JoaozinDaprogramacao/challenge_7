@@ -8,9 +8,14 @@ import jakarta.validation.constraints.Size;
 
 public record DestinoPutRequestDto(
 		MultipartFile foto, 
+		MultipartFile foto2, 
 		BigDecimal preco,
 		@Size(max = 255)
-		String nome
+		String nome,
+		@Size(max = 160)
+		String meta,
+		@Size(max = 300)
+		String textoDescritivo
 		) {
 
 	
