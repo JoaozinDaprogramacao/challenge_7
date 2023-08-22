@@ -41,8 +41,7 @@ public class DestinoService {
 				.toUriString();
 
 		return ResponseEntity.created(URI.create(uri))
-				.body(new DestinoGetDto(
-						destino.getId(), destino.getFoto(), destino.getFoto2(),
+				.body(new DestinoGetDto(destino.getFoto(), destino.getFoto2(),
 						destino.getPreco(), destino.getNome(), destino.getMeta(),
 						destino.getTextoDescritivo()));
 
